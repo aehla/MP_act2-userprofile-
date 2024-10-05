@@ -1,20 +1,22 @@
-import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View } from 'react-native';
+import React from 'react';
+import { SafeAreaView, StatusBar, useColorScheme } from 'react-native';
+import { Provider as PaperProvider, DarkTheme, DefaultTheme } from 'react-native-paper';
+import UserProfile from './scr/screen/UserProfile'; // Update the import path
 
-export default function App() {
+const App = () => {
+  const colorScheme = useColorScheme();
+  const isDarkModeEnabled = colorScheme === 'dark';
+
+  const theme = isDarkModeEnabled ? DarkTheme : DefaultTheme;
+
   return (
-    <View style={styles.container}>
-      <Text>Open up App.js to start working on your app!</Text>
-      <StatusBar style="auto" />
-    </View>
+    <PaperProvider theme={theme}>
+      <SafeAreaView style={{ flex: 1 }}>
+        <StatusBar barStyle={isDarkModeEnabled ? 'light-content' : 'dark-content'} />
+        <UserProfile />
+      </SafeAreaView>
+    </PaperProvider>
   );
-}
+};
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-});
+export default App;
