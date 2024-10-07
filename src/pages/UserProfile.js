@@ -35,7 +35,7 @@ const UserProfile = () => {
           <NameTitle
             name="Ella"
             surname="Guillena"
-            joinedText="21 years old"  // Added joinedText prop
+            joinedText="Joined 3 Days ago."  // Added joinedText prop
             isDarkModeEnabled={isDarkModeEnabled}  // Pass dark mode state to NameTitle
           />
         </View>
