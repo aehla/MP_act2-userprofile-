@@ -5,9 +5,11 @@ import Icon from 'react-native-vector-icons/MaterialIcons';
 import { useTheme } from 'react-native-paper';
 import Avatar from '../components/avatar';
 import NameTitle from '../components/NameTitle';
+import { useNavigation } from '@react-navigation/native';
 
 const UserProfile = () => {
   const { colors } = useTheme();
+  const navigation = useNavigation();
   const [isDarkModeEnabled, setDarkModeEnabled] = useState(false);
   const [isNotificationsEnabled, setNotificationsEnabled] = useState(false);
 
@@ -17,7 +19,10 @@ const UserProfile = () => {
 
   const toggleNotifications = () => setNotificationsEnabled(!isNotificationsEnabled);
   const handleEditProfile = () => console.log('Edit profile pressed');
-  const handleSignOut = () => console.log('Signing out...');
+  const handleSignOut = () => {
+    console.log('Signing out...');
+    navigation.navigate('Signin');
+  };
 
   return (
     <View style={[styles.container, { backgroundColor: isDarkModeEnabled ? '#333' : colors.background }]}>
@@ -35,8 +40,8 @@ const UserProfile = () => {
           <NameTitle
             name="Ella"
             surname="Guillena"
-            joinedText="Joined 3 Days ago."  // Added joinedText prop
-            isDarkModeEnabled={isDarkModeEnabled}  // Pass dark mode state to NameTitle
+            joinedText="Joined 3 Days ago."
+            isDarkModeEnabled={isDarkModeEnabled}
           />
         </View>
       </View>
