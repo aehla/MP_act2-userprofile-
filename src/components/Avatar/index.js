@@ -1,27 +1,37 @@
-import { Image, View } from 'react-native'
+import React from 'react';
+import { View, Image, TouchableOpacity, StyleSheet } from 'react-native';
+import Icon from 'react-native-vector-icons/MaterialIcons';
+import { useTheme } from 'react-native-paper';
 
-const Avatar = (props) => {
+const Avatar = ({ onEdit, isDarkModeEnabled }) => {
+  const { colors } = useTheme();
   return (
-    <View
-        style={{    
-            width: props.toggle ? 250 : 150, 
-            height: props.toggle ? 250 : 150, 
-            boxShadow: '#000',
-            border: '15px solid #000', 
-            padding: 5,
-            borderRadius: 75, 
-        }}
-    >
-        <Image 
-                source={require('../../assets/logo.png')}
-                style={{ 
-                    width: '100%',
-                    height: '100%',
-                }} 
-        />
+    <View style={styles.avatarContainer}>
+      <Image source={require('../../assets/avatar.png')} style={styles.profileImage} />
+      <TouchableOpacity onPress={onEdit} style={styles.editIconContainer}>
+        <Icon name="edit" size={24} color={isDarkModeEnabled ? '#fff' : colors.text} />
+      </TouchableOpacity>
     </View>
-    
-  )
-}
+  );
+};
 
-export default Avatar
+const styles = StyleSheet.create({
+  avatarContainer: {
+    position: 'relative',
+  },
+  profileImage: {
+    width: 150,
+    height: 150,
+    borderRadius: 80,
+  },
+  editIconContainer: {
+    position: 'absolute',
+    bottom: 0,
+    right: 0,
+    backgroundColor: '#fff',
+    borderRadius: 12,
+    padding: 4,
+  },
+});
+
+export default Avatar;

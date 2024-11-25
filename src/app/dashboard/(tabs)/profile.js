@@ -1,6 +1,7 @@
 import React from 'react';
 import { View, StyleSheet, TouchableOpacity, Text, ScrollView } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialIcons';
+import Avatar from '../../../components/Avatar'; // Import Avatar component
 
 const Profile = () => {
   const handleEdit = (section) => {
@@ -11,7 +12,13 @@ const Profile = () => {
     <ScrollView style={styles.container}>
       {/* Profile Header */}
       <View style={styles.profileHeader}>
-        <Icon name="person" size={80} color="#201B51" />
+        {/* Avatar */}
+        <Avatar 
+          size={100} 
+          source={{ uri: 'https://example.com/your-avatar-image.jpg' }} // Replace with your avatar image URL
+          fallback="EG" // Fallback initials for the avatar
+          style={styles.avatar}
+        />
         <Text style={styles.nameText}>Ella Guillena</Text>
         <Text style={styles.joinedText}>Joined 3 days ago</Text>
       </View>
@@ -71,6 +78,11 @@ const styles = StyleSheet.create({
     borderBottomLeftRadius: 20,
     borderBottomRightRadius: 20,
     marginBottom: 16,
+  },
+  avatar: {
+    marginBottom: 16,
+    borderWidth: 2,
+    borderColor: '#6C63FF', // Optional: Add a border to the avatar
   },
   nameText: {
     fontSize: 22,
