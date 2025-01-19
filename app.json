@@ -1,7 +1,7 @@
 {
   "expo": {
     "name": "Checkmate",
-    "slug": "Checkmate",
+    "slug": "demo",
     "scheme": "com.demo.app",
     "version": "1.0.0",
     "orientation": "portrait",
