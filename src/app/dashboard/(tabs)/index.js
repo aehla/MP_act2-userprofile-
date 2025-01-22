@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { 
   View, 
   Text, 
@@ -11,6 +11,7 @@ import {
   KeyboardAvoidingView, 
   Platform 
 } from 'react-native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Card } from 'react-native-paper';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { DateTimePickerAndroid } from '@react-native-community/datetimepicker';
@@ -26,6 +27,101 @@ const Home = () => {
   const [editGoal, setEditGoal] = useState(null);
   const [modalVisible, setModalVisible] = useState(false);
   const [isGoalModal, setIsGoalModal] = useState(false);
+  const [refreshing, setRefreshing] = useState(false);
+
+
+    // Load tasks from AsyncStorage
+    useEffect(() => {
+      const loadTasks = async () => {
+        try {
+          const storedTasks = await AsyncStorage.getItem('tasks');
+          if (storedTasks) {
+            setTasks(JSON.parse(storedTasks));
+          }
+        } catch (error) {
+          console.error('Failed to load tasks:', error);
+        }
+      };
+
+      const loadCompletedTasks = async () => {
+        try {
+          const storedCompletedTasks = await AsyncStorage.getItem('completedTasks');
+          if (storedCompletedTasks) {
+            setCompletedTasks(JSON.parse(storedCompletedTasks));
+          }
+        } catch (error) {
+          console.error('Failed to load completed tasks:', error);
+        }
+      };
+    
+      loadTasks();
+      loadCompletedTasks();
+    }, []);
+    
+    useEffect(() => {
+      const saveTasks = async () => {
+        try {
+          await AsyncStorage.setItem('tasks', JSON.stringify(tasks));
+        } catch (error) {
+          console.error('Failed to save tasks:', error);
+        }
+      };
+    
+      const saveCompletedTasks = async () => {
+        try {
+          await AsyncStorage.setItem('completedTasks', JSON.stringify(completedTasks));
+        } catch (error) {
+          console.error('Failed to save completed tasks:', error);
+        }
+      };
+    
+      saveTasks();
+      saveCompletedTasks();
+    }, [tasks, completedTasks]);
+    
+    // Add this for goals:
+    useEffect(() => {
+      const loadGoals = async () => {
+        try {
+          const storedGoals = await AsyncStorage.getItem('goals');
+          if (storedGoals) {
+            setGoals(JSON.parse(storedGoals));
+          }
+        } catch (error) {
+          console.error('Failed to load goals:', error);
+        }
+      };
+    
+      loadGoals();
+    }, []);
+    
+    useEffect(() => {
+      const saveGoals = async () => {
+        try {
+          await AsyncStorage.setItem('goals', JSON.stringify(goals));
+        } catch (error) {
+          console.error('Failed to save goals:', error);
+        }
+      };
+    
+      saveGoals();
+    }, [goals]);
+    
+    // Save tasks to AsyncStorage whenever they change
+    useEffect(() => {
+      const saveTasks = async () => {
+        try {
+          await AsyncStorage.setItem('tasks', JSON.stringify(tasks));
+        } catch (error) {
+          console.error('Failed to save tasks:', error);
+        }
+      };
+  
+      saveTasks();
+    }, [tasks]);
+
+    
+  
 
   // Add or Edit Task
   const handleTaskSubmit = () => {
@@ -141,6 +237,8 @@ const Home = () => {
     setTasks(updatedTasks);
   };
 
+  
+
   // Show DatePicker for deadline selection
   const showDatePicker = () => {
     DateTimePickerAndroid.open({
@@ -153,6 +251,17 @@ const Home = () => {
       mode: 'date',
       is24Hour: true,
     });
+  };
+
+  // Refresh handler for pull-to-refresh
+  const handleRefresh = async () => {
+    setRefreshing(true);
+    await Promise.all([
+      AsyncStorage.getItem('tasks').then((storedTasks) => storedTasks && setTasks(JSON.parse(storedTasks))),
+      AsyncStorage.getItem('completedTasks').then((storedCompletedTasks) => storedCompletedTasks && setCompletedTasks(JSON.parse(storedCompletedTasks))),
+      AsyncStorage.getItem('goals').then((storedGoals) => storedGoals && setGoals(JSON.parse(storedGoals))),
+    ]);
+    setRefreshing(false);
   };
 
   return (
@@ -206,6 +315,8 @@ const Home = () => {
             </View>
           </View>
         )}
+        refreshing={refreshing}
+        onRefresh={handleRefresh}
       />
 
       <Text style={styles.tipsHeader}>Finished Tasks</Text>
@@ -223,6 +334,8 @@ const Home = () => {
             </View>
           </View>
         )}
+        refreshing={refreshing}
+        onRefresh={handleRefresh}
       />
 
       <Text style={styles.tipsHeader}>Your Goals</Text>
@@ -242,6 +355,8 @@ const Home = () => {
             </View>
           </View>
         )}
+        refreshing={refreshing}
+        onRefresh={handleRefresh}
       />
 
       <Modal
@@ -318,10 +433,13 @@ const styles = StyleSheet.create({
   },
   actionButton: {
     backgroundColor: '#201B51',
-    padding: 10,
-    borderRadius: 20,
     flexDirection: 'row',
     alignItems: 'center',
+    justifyContent: 'center',
+    paddingVertical: 10,
+    paddingHorizontal: 20,
+    borderRadius: 30,
+    width: '48%',
   },
   actionText: {
     color: '#fff',
